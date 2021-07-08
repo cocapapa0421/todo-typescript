@@ -1,7 +1,26 @@
+import { v4 } from "uuid";
 import createState from "../createState";
-import type { TodoItem } from "../createState";
 
-const { subscribe, getState, setState } = createState();
+export type Status = "idle" | "request" | "success" | "failure";
+export type TodoItem = {
+  readonly id: string;
+  content: string;
+  complete: boolean;
+};
+
+export type Todolist = {
+  status: Status;
+  data: TodoItem[];
+  idEdit: string;
+};
+
+const initialState: Todolist = {
+  status: "idle",
+  data: [],
+  idEdit: "",
+};
+
+const { subscribe, getState, setState } = createState(initialState);
 
 function getTodolist() {
   const { data } = getState();

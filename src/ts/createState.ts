@@ -1,22 +1,11 @@
-type Listener = () => void;
-export type Status = "idle" | "request" | "success" | "failure";
-export type TodoItem = {
-  readonly id: string;
-  content: string;
-  complete: boolean;
-};
-export type State = {
-  data: TodoItem[];
-  status: Status;
-  idEdit: string;
-  callback?(): () => void;
-};
+export type Listener = () => void;
+export type Dispatch<StateT extends any> = (state: StateT) => StateT;
 
-class Store {
-  private state: State;
+class Store<StateT> {
+  private state: StateT;
   private listeners: Listener[];
 
-  constructor(state: State) {
+  constructor(state: StateT) {
     this.state = state;
     this.listeners = [];
 
@@ -35,10 +24,11 @@ class Store {
     this.listeners.push(listener);
   }
 
-  public setState(state: State | ((state: State) => State)) {
+  public setState(state: StateT | Dispatch<StateT>) {
     const prevState = this.state;
     if (typeof state === "function") {
-      this.state = state(prevState);
+      const dispatch = state as Dispatch<StateT>;
+      this.state = dispatch(prevState);
     } else {
       this.state = state;
     }
@@ -51,13 +41,7 @@ class Store {
   }
 }
 
-function createState() {
-  const initialState: State = {
-    data: [],
-    status: "idle",
-    idEdit: "",
-  };
-
+function createState<StateT extends any = any>(initialState: StateT) {
   const store = new Store(initialState);
   return store;
 }

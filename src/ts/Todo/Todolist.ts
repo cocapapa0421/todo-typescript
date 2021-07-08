@@ -1,4 +1,5 @@
-import type { TodoItem } from "./../createState";
+import { TodoItem } from "./state";
+import { v4 as uuidv4 } from "uuid";
 import {
   subscribe,
   getIdEdit,
@@ -64,7 +65,7 @@ class Todolist {
       return;
     }
     const todoItem: TodoItem = {
-      id: Date.now().toString(),
+      id: uuidv4(),
       content,
       complete: false,
     };
@@ -107,7 +108,7 @@ class Todolist {
   }
 
   private getAttribute(event: MouseEvent, attribute: string = "data-id") {
-    const targetEl = event.currentTarget as HTMLButtonElement;
+    const targetEl = event.currentTarget as HTMLElement;
     const id = targetEl.getAttribute(attribute);
     return id;
   }
