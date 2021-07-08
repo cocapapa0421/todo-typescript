@@ -108,7 +108,7 @@ class Todolist {
 
   private getAttribute(event: MouseEvent, attribute: string = "data-id") {
     const targetEl = event.currentTarget as HTMLButtonElement;
-    const id = targetEl.getAttribute("data-id");
+    const id = targetEl.getAttribute(attribute);
     return id;
   }
 
