@@ -1,20 +1,7 @@
-import { v4 } from "uuid";
+import { TTodoState, TTodoCard } from "./../types";
 import createState from "../createState";
 
-export type Status = "idle" | "request" | "success" | "failure";
-export type TodoItem = {
-  readonly id: string;
-  content: string;
-  complete: boolean;
-};
-
-export type Todolist = {
-  status: Status;
-  data: TodoItem[];
-  idEdit: string;
-};
-
-const initialState: Todolist = {
+const initialState: TTodoState = {
   status: "idle",
   data: [],
   idEdit: "",
@@ -22,12 +9,11 @@ const initialState: Todolist = {
 
 const { subscribe, getState, setState } = createState(initialState);
 
-function getTodolist() {
-  const { data } = getState();
-  return data;
+function getTodoState() {
+  return getState();
 }
 
-function setTodolist(list: TodoItem[]) {
+function setTodolist(list: TTodoCard[]) {
   setState((state) => {
     return {
       ...state,
@@ -42,25 +28,25 @@ function getIdEdit() {
   return idEdit;
 }
 
-function setIdEdit(id: string) {
+function setIdEdit(idEdit: string) {
   setState((state) => {
     return {
       ...state,
-      idEdit: id,
+      idEdit,
     };
   });
 }
 
-function addTodoItem(todoItem: TodoItem) {
+function addTodoItem(item: TTodoCard) {
   setState((state) => {
     return {
       ...state,
-      data: [...state.data, todoItem],
+      data: [...state.data, item],
     };
   });
 }
 
-function editTodoItem({ id, content }: { id: string; content: string }) {
+function editTodoItem({ id, content }: Omit<TTodoCard, "complete">) {
   setState((state) => {
     return {
       ...state,
@@ -107,7 +93,7 @@ function deleteTodoItem(id: string) {
 export {
   subscribe,
   getIdEdit,
-  getTodolist,
+  getTodoState,
   setTodolist,
   setIdEdit,
   addTodoItem,

@@ -1,0 +1,19 @@
+.card {
+  border: 1px solid var(--color-gray-3);
+  box-shadow: 0px 6px 14px rgba(42, 42, 47, 0.1);
+  border-radius: 1rem;
+  padding: 1.5rem 2rem;
+  background-color: var(--color-white);
+}
+
+.card + .card {
+  margin-top: 1rem;
+}
+
+.card.is-active .card__content {
+  text-decoration: line-through;
+}
+
+.card__actions > :not(first-child) {
+  margin-right: 1rem;
+}

@@ -1,9 +1,10 @@
-import { TodoItem } from "./state";
+import { TTodoCard } from "./../types";
+import "./Todo.scss";
 import { v4 as uuidv4 } from "uuid";
 import {
   subscribe,
   getIdEdit,
-  getTodolist,
+  getTodoState,
   setTodolist,
   setIdEdit,
   addTodoItem,
@@ -11,12 +12,14 @@ import {
   completeTodoItem,
   deleteTodoItem,
 } from "./state";
+import Form from "../Form/Form";
+import Todolist from "../Todolist/Todolist";
 
-class Todolist {
+class Todo {
   private els: HTMLDivElement;
   private inputTetxElement!: HTMLInputElement;
 
-  constructor(selector: string, todoList: TodoItem[]) {
+  constructor(selector: string, todoList: TTodoCard[]) {
     this.els = document.querySelector(selector) as HTMLDivElement;
     subscribe(this.update.bind(this));
     setTodolist(todoList);
@@ -64,12 +67,12 @@ class Todolist {
     if (!content) {
       return;
     }
-    const todoItem: TodoItem = {
+    const item: TTodoCard = {
       id: uuidv4(),
       content,
       complete: false,
     };
-    addTodoItem(todoItem);
+    addTodoItem(item);
   }
 
   private handleEditTodoItem(event: Event) {
@@ -113,41 +116,17 @@ class Todolist {
     return id;
   }
 
-  private renderForm() {
-    const idEdit = getIdEdit();
-
-    return `
-      <form id="form">
-        <input type="text" id="formInputText" placholder="${
-          !!idEdit ? "" : "Add a new item..."
-        }" />
-        <button id="formButton">${!!idEdit ? "Edit" : "Add"}</button>
-      </form>
-    `;
-  }
-
-  private renderTodoItem(item: TodoItem) {
-    return `
-      <li>
-        <span style="color: ${item.complete ? "red" : "inherit"}">${
-      item.content
-    }</span>
-        <span class="button-groups">
-          <button class="button edit" data-id="${item.id}">Edit</button>
-          <button class="button complete" data-id="${item.id}">Complete</button>
-          <button class="button delete" data-id="${item.id}">Delete</button>
-        </span>
-      </li>
-    `;
-  }
-
-  private renderApp(list: TodoItem[]) {
-    const html = `
+  private render() {
+    const { idEdit, data } = getTodoState();
+    let html = `
       <div class="todo">
-        ${this.renderForm()}
-        <ul class="todo__list">
-          ${list.map(this.renderTodoItem).join(" ")}
-        </ul>
+        ${Form(idEdit)}
+        <div class="todo__head grid">
+          <div class="todo__head-status">Status</div>
+          <div class="todo__head-content">Task Name</div>
+          <div class="todo__head-actions">Actions</div>
+        </div>
+        ${Todolist(data)}
       </div>
     `;
 
@@ -155,10 +134,9 @@ class Todolist {
   }
 
   private update() {
-    const list = getTodolist();
-    this.renderApp(list);
+    this.render();
     this.handleDOM();
   }
 }
 
-export default Todolist;
+export default Todo;

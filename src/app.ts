@@ -1,3 +1,3 @@
-import Todolist from "./ts/Todo/Todolist";
+import Todo from "./Todo/Todo";
 
-new Todolist("#app", []);
+new Todo("#app", []);

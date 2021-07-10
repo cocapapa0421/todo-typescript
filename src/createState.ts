@@ -1,9 +1,8 @@
-export type Listener = () => void;
-export type Dispatch<StateT extends any> = (state: StateT) => StateT;
+import { TListener, TDispatch, TUnsubscribe } from "./types";
 
 class Store<StateT> {
   private state: StateT;
-  private listeners: Listener[];
+  private listeners: TListener[];
 
   constructor(state: StateT) {
     this.state = state;
@@ -20,14 +19,22 @@ class Store<StateT> {
     });
   }
 
-  public subscribe(listener: Listener) {
+  public subscribe(listener: TListener) {
     this.listeners.push(listener);
+
+    const unsubscribe: TUnsubscribe = () => {
+      this.listeners = this.listeners.filter(
+        (listener_) => listener_ !== listener
+      );
+    };
+
+    return unsubscribe;
   }
 
-  public setState(state: StateT | Dispatch<StateT>) {
+  public setState(state: StateT | TDispatch<StateT>) {
     const prevState = this.state;
     if (typeof state === "function") {
-      const dispatch = state as Dispatch<StateT>;
+      const dispatch = state as TDispatch<StateT>;
       this.state = dispatch(prevState);
     } else {
       this.state = state;
